@@ -1,5 +1,5 @@
 const { JWT_SECRET } = require("../config");
-const { HttpUnAuthenticatedError } = require("../services/error.service");
+const { HttpUnAuthenticatedError, HttpUnAuthorisedError } = require("../services/error.service");
 
 const jwt = require("jsonwebtoken");
 
@@ -21,7 +21,7 @@ exports.verifyToken = async (req, res, next) => {
 
 exports.isAdmin = async (req, res, next) => {
   if (!req.user || !req.user.isAdmin) {
-    return next(new HttpUnAuthenticatedError());
+    return next(new HttpUnAuthorisedError());
   }
   next();
 };
