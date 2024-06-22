@@ -19,4 +19,31 @@ const mountSocket = (server) => {
   return io;
 };
 
-module.exports = mountSocket;
+const shutdownServer = (server, io) => {
+  console.log("Closing server gracefully...");
+
+  // Close socket.io connections
+  io.close(() => {
+    console.log("Socket.io connections closed.");
+    server.close(() => {
+      console.log("Server closed.");
+      process.exit(0);
+    });
+  });
+};
+
+const closeServerHandler = (server, io) => {
+  // Listen for shutdown signals
+  process.on("SIGINT", () => {
+    shutdownServer(server, io);
+  });
+  process.on("SIGTERM", () => {
+    shutdownServer(server, io);
+  });
+  process.on("SIGQUIT", () => {
+    shutdownServer(server, io);
+  });
+};
+
+module.exports.mountSocket = mountSocket;
+module.exports.closeServerHandler = closeServerHandler;
