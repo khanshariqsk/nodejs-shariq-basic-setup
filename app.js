@@ -6,10 +6,16 @@ const server = http.createServer(app);
 const mainRoutes = require("./routes/main.route");
 const { globalErrorHandler, noRouteFound } = require("./utils/error.util");
 const cookieParser = require("cookie-parser");
-const mountSocket = require("./services/socket.service");
+const {
+  mountSocket,
+  closeServerHandler,
+} = require("./services/socket.service");
 
 //socket mount
 const io = mountSocket(server);
+
+//server cleanup
+closeServerHandler(server, io);
 
 //middleware to attach io to every request
 app.use((req, res, next) => {
